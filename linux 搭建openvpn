@@ -1,0 +1,36 @@
+1.安装 lzo解压工具yum install -y lzo lzo-devel
+2.安装openssl yum install openssl-devel
+3.安装依赖包 libpam yum install pam-devel
+以上步骤可以一步完成：yum install -y openssl openssl-devel lzo lzo-devel pam pam-devel automake pkgconfig
+4.安装openvpn：先运行yum install epel-release，再运行yum install openvpn 
+5.安装gcc yum -y install gcc（如果不使用yum安装vpn，而是使用源码安装，则需要安装gcc）
+6.unzip:yum install unzip
+7.下载easy-rsa wget -c https://github.com/OpenVPN/easy-rsa/archive/master.zip
+8.解压 unzip mastar.zip
+9.mv easy-rsa-master easy-rsa
+10.初始化服务端证书：进入easy-rsa/easyrsa3路径下
+	./easyrsa init-pki   #建立一个空的pki结构，生成一系列的文件和目录
+	./easyrsa build-ca   #创建ca  密码 和 cn那么需要记住
+	./easyrsa gen-req server nopass  #创建服务端证书  common name 最好不要跟前面的cn那么一样
+	./easyrsa sign server server   #签约服务端证书
+	./easyrsa gen-dh 
+	
+	密码都是123456
+11.初始化客户端证书：cp -r easy-rsa easy-rsa-cli
+进入easy-rsa-cli/easyrsa3
+./easyrsa init-pki
+./easyrsa gen-req client #用自己的名字，需要创建一个密码  和 cn name，自己用的 需要记住
+	#切换到server证书目录下
+cd xxxx/easy-rsa/easyrsa3/ 
+./easyrsa import-req easy-rsa-cli/easyrsa3/pki/reqs/client.req client  #导入req
+./easyrsa sign client client #用户签约，根据提示输入服务端的ca密码
+	
+12.启动openvpn：
+配置openvpn的server.conf，引入上面的服务器证书与等证书，然后运行openvpn --config server.conf
+	
+	
+	
+	
+	
+	
+查看yum安装目录命令 rpm -qa | grep “安装的应用名称” rpm -ql 应用包
